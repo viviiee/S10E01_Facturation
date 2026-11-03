@@ -29,7 +29,8 @@ public sealed partial class FormFacture : Form, IObserver<EtatCommandeDto>
 
         AfficherEtat(m_modele.Consulter());
         // S10-A : conserver l’abonnement retourné par la source.
-        m_abonnement = null; // À remplacer.
+        
+        m_abonnement = m_modele.Subscribe(this); // À remplacer.
     }
 
     public void OnNext(EtatCommandeDto etat)
@@ -41,13 +42,20 @@ public sealed partial class FormFacture : Form, IObserver<EtatCommandeDto>
     {
         ArgumentNullException.ThrowIfNull(etat);
         // S10-V : afficher les montants reçus et le statut, sans les recalculer.
-        lResumeFacture.Text = "Affichage de la facture à compléter (S10-V).";
+        
+        lResumeFacture.Text = "Total : " + 
+            etat.Facture.Total + 
+            " - Frais : " + 
+            etat.Facture.Frais + 
+            " | Statut de la commande : " +
+            etat.Facture.EstProvisoire.ToString();
     }
 
     private void FormFacture_Disposed(object? sender, EventArgs e)
     {
         // S10-D : appeler la méthode SeDesabonner fournie.
         // À compléter : appeler la méthode fournie.
+        SeDesabonner();
     }
 
     // Fourni : le nettoyage peut être demandé plusieurs fois.
